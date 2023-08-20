@@ -1,0 +1,137 @@
+basePath: /
+definitions:
+  entity.Note:
+    properties:
+      deleted:
+        type: boolean
+      description:
+        type: string
+      remindsAt:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  handlers.CreateNoteInput:
+    properties:
+      description:
+        type: string
+      remindsAt:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  handlers.NotesResponse:
+    properties:
+      notes:
+        items:
+          $ref: '#/definitions/entity.Note'
+        type: array
+    type: object
+  handlers.UpdatedNoteResponse:
+    properties:
+      note:
+        $ref: '#/definitions/entity.Note'
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: This is a service for creating notes with reminders and notifications.
+  title: Notes Service
+  version: "1.0"
+paths:
+  /api/notes:
+    get:
+      description: Get all notes except deleted
+      operationId: get-all-note
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.NotesResponse'
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get all notes
+      tags:
+      - Notes
+    post:
+      description: Create note
+      operationId: create-note
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create note
+      tags:
+      - Notes
+  /api/notes/{id}:
+    delete:
+      description: Delete note by id
+      operationId: delete-note
+      parameters:
+      - description: Note id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Delete note
+      tags:
+      - Notes
+    put:
+      description: Update note by id
+      operationId: update-note
+      parameters:
+      - description: Note id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Input data to update note
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateNoteInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.UpdatedNoteResponse'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Update note
+      tags:
+      - Notes
+swagger: "2.0"
